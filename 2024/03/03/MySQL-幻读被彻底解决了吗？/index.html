@@ -484,7 +484,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    574
+                    649
                 </div>
                 
 
@@ -534,6 +534,7 @@ T2 时刻：事务 B 往插入一个 id= 200 的记录并提交；
 T3 时刻：事务 A 更新 id = 5 这条记录，然后事务A再次快照读，就会读到4条数据。
 </code></pre>
 <p>原因：事务A的更新操作是锁定读，读的是最新的数据，因此事务A的更新操作是可以生效的在这个时刻，这条新记录的 trx_id 隐藏列的值就变成了事务 A 的事务 id，所以是能看到的。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>要避免这类特殊场景下发生幻读的现象的话，就是尽量在开启事务之后，马上执行 select … for update 这类当前读的语句，因为它会对记录加 next-key lock，从而避免其他事务插入一条新记录。</p>
 
                 
             </div>
@@ -1199,7 +1200,7 @@ T3 时刻：事务 A 更新 id = 5 这条记录，然后事务A再次快照读�
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">21.3k</span>&nbsp;字
+                class="white-color">21.4k</span>&nbsp;字
             
             
             
@@ -1417,10 +1418,10 @@ $(function () {
     if (windowWidth > 768) {
         document.write('<script type="text/javascript" src="/js/sakura.js"><\/script>');
     }
-    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </script>
 
 
 
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/haru01.model.json"},"display":{"superSample":2,"width":150,"height":250,"position":"right","hOffset":80,"vOffset":0},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/haru01.model.json"},"display":{"superSample":2,"width":150,"height":250,"position":"right","hOffset":80,"vOffset":0},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script><!-- hexo-inject:begin --><!-- hexo-inject:end --></body>
 
 </html>
