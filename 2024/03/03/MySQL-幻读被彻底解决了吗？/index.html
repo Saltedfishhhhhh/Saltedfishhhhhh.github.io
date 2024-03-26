@@ -4,7 +4,7 @@
 
 <head>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
-    <meta name="keywords" content="Mysql主从复制, Fish">
+    <meta name="keywords" content="MySQL RR隔离级别下，幻读被彻底解决了吗？, Fish">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Mysql主从复制 | Fish</title>
+    <title>MySQL RR隔离级别下，幻读被彻底解决了吗？ | Fish</title>
     <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/libs/awesome/css/all.css">
@@ -324,12 +324,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/medias/featureimages/19.webp')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/medias/featureimages/18.webp')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Mysql主从复制</h1>
+                    <h1 class="description center-align post-title">MySQL RR隔离级别下，幻读被彻底解决了吗？</h1>
                 </div>
             </div>
         </div>
@@ -445,12 +445,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/mysql/">
-                                <span class="chip bg-color">mysql</span>
-                            </a>
-                        
-                            <a href="/tags/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
-                                <span class="chip bg-color">主从复制</span>
+                            <a href="/tags/Mysql/">
+                                <span class="chip bg-color">Mysql</span>
                             </a>
                         
                     </div>
@@ -461,12 +457,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E4%BC%98%E5%8C%96/" class="post-category">
-                                优化
-                            </a>
-                        
-                            <a href="/categories/%E4%BC%98%E5%8C%96/Bug/" class="post-category">
-                                Bug
+                            <a href="/categories/Mysql/" class="post-category">
+                                Mysql
                             </a>
                         
                     </div>
@@ -478,28 +470,28 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-11-07
+                    2024-03-03
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2023-11-07
+                    2024-03-26
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.2k
+                    574
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    4 分
+                    2 分
                 </div>
                 
 
@@ -524,103 +516,24 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="主机"><a href="#主机" class="headerlink" title="主机"></a>主机</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>我的配置文件在：/etc/mysql/mysql.conf.d/mysqld.cnf<br>修改对应的配置：</p>
-<pre class=" language-#"><code class="language-#">###主从数据库配置核心部分
-[mysqld]
-# 设置同步的binary log二进制日志文件名前缀，默认为binlog；在MySQL 8.0中，无论是否指定--log bin选项，默认情况下都会启用二进制日志记录，并将log_bin系统变量设置为ON。
-log-bin=mysql-bin
-# 服务器唯一id，默认为1，值范围为1～2^32−1. ；主数据库和从数据库的server-id不能重复
-server-id=1          
-
-###可选配置
-# 需要主从复制的数据库，如多个则重复配置
-binlog-do-db=test
-# 复制过滤：也就是指定哪个数据库不用同步（mysql库一般不同步），如多个则重复配置
-binlog-ignore-db=mysql
-# 为每个session分配的内存，在事务过程中用来存储二进制日志的缓存
-binlog_cache_size=1M
-# 主从复制的格式（mixed,statement,row，默认格式是statement。建议是设置为row，主从复制时数据更加能够统一）
-binlog_format=row
-# 配置二进制日志自动删除/过期时间，单位秒，默认值为2592000，即30天；8.0.3版本之前使用expire_logs_days，单位天数，默认值为0，表示不自动删除。
-binlog_expire_logs_seconds=2592000
-# 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断，默认OFF关闭，可选值有OFF、all、ddl_exist_errors以及错误码列表。8.0.26版本之前使用slave_skip_errors
-# 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致
-replica_skip_errors=1062
+                <h2 id="RR级别下的解决方案："><a href="#RR级别下的解决方案：" class="headerlink" title="RR级别下的解决方案："></a>RR级别下的解决方案：</h2><h4 id="针对快照读："><a href="#针对快照读：" class="headerlink" title="针对快照读："></a>针对快照读：</h4><pre><code>（普通 select 语句），是通过 MVCC 方式解决了幻读，因为可重复读隔离级别下，事务执行过程中看到的数据，一直跟这个事务启动时看到的数据是一致的，即使中途有其他事务插入了一条数据，是查询不出来这条数据的，所以就很好了避免幻读问题。
 </code></pre>
-<h3 id="启动mysql创建账户并授权"><a href="#启动mysql创建账户并授权" class="headerlink" title="启动mysql创建账户并授权"></a>启动mysql创建账户并授权</h3><pre class=" language-#"><code class="language-#">CREATE USER '账户名'@'%' IDENTIFIED BY '密码';
-GRANT REPLICATION SLAVE ON *.* TO '账户名'@'%';
-FLUSH PRIVILEGES;
+<h4 id="针对当前读："><a href="#针对当前读：" class="headerlink" title="针对当前读："></a>针对当前读：</h4><pre><code>（select ... for update 等语句），是通过 next-key lock（记录锁+间隙锁）方式解决了幻读，因为当执行 select ... for update 语句的时候，会加上 next-key lock，如果有其他事务在 next-key lock 锁范围内插入了一条记录，那么这个插入语句就会被阻塞，无法成功插入，所以就很好了避免幻读问题。
 </code></pre>
-<h3 id="记住二进制文件及位置"><a href="#记住二进制文件及位置" class="headerlink" title="记住二进制文件及位置"></a>记住二进制文件及位置</h3><p><img src="/images/pasted-13.png"></p>
-<h2 id="从机"><a href="#从机" class="headerlink" title="从机"></a>从机</h2><h3 id="配置文件-1"><a href="#配置文件-1" class="headerlink" title="配置文件"></a>配置文件</h3><pre class=" language-#"><code class="language-#">###主从数据库配置核心部分
-[mysqld]
-# 设置同步的binary log二进制日志文件名前缀，默认是binlog
-log-bin=mysql-bin
-# 服务器唯一id，默认为1，值范围为1～2^32−1. ；主数据库和从数据库的server-id不能重复
-server-id=2
-
-###可选配置
-# 需要主从复制的数据库 ，如多个则重复配置
-replicate-do-db=test
-# 复制过滤：也就是指定哪个数据库不用同步（mysql库一般不同步） ，如多个则重复配置
-binlog-ignore-db=mysql
-# 为每个session分配的内存，在事务过程中用来存储二进制日志的缓存 
-binlog_cache_size=1M
-# 主从复制的格式（mixed,statement,row，默认格式是statement。建议是设置为row，主从复制时数据更加能够统一） 
-binlog_format=row
-# 配置二进制日志自动删除/过期时间，单位秒，默认值为2592000，即30天；8.0.3版本之前使用expire_logs_days，单位天数，默认值为0，表示不自动删除。
-binlog_expire_logs_seconds=2592000
-# 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断，默认OFF关闭，可选值有OFF、all、ddl_exist_errors以及错误码列表。8.0.26版本之前使用slave_skip_errors
-# 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致
-replica_skip_errors=1062
-# relay_log配置中继日志，默认采用 主机名-relay-bin 的方式保存日志文件 
-relay_log=replicas-mysql-relay-bin  
-# log_replica_updates表示slave是否将复制事件写进自己的二进制日志，默认值ON开启；8.0.26版本之前使用log_slave_updates
-log_replica_updates=ON
-# 防止改变数据(只读操作，除了特殊的线程)
-read_only=ON
+<h2 id="还可能发生幻读的可能"><a href="#还可能发生幻读的可能" class="headerlink" title="还可能发生幻读的可能"></a>还可能发生幻读的可能</h2><h4 id="情况一"><a href="#情况一" class="headerlink" title="情况一"></a>情况一</h4><p>事务A 先快照读，事务B新增了一条数据并提交事务，事务1再当前读。</p>
+<p>例如：</p>
+<pre><code>T1 时刻：事务 A 先执行「快照读语句」：select * from t_test where id &gt; 100 得到了 3 条记录。
+T2 时刻：事务 B 往插入一个 id= 200 的记录并提交；
+T3 时刻：事务 A 再执行「当前读语句」 select * from t_test where id &gt; 100 for update 就会得到 4 条记录，此时也发生了幻读现象。
 </code></pre>
-<h3 id="设置联系"><a href="#设置联系" class="headerlink" title="设置联系"></a>设置联系</h3><p>启动mysql，按上面的内容改成自己的</p>
-<p>低于8.0.23版本的语法：</p>
-<pre class=" language-#"><code class="language-#">CHANGE MASTER TO MASTER_HOST='主机地址',MASTER_PORT=3306,MASTER_USER='账户名',MASTER_PASSWORD='密码',MASTER_LOG_FILE='mysql-bin.000011',MASTER_LOG_POS=1693;
+<p>原因：当前读读取的是最新版本的，所以会读取到B插入的数据</p>
+<h4 id="情况二"><a href="#情况二" class="headerlink" title="情况二"></a>情况二</h4><p>事务1 先快照读，事务2新增了一条数据并提交事务，事务1对事务2提交的数据进行了修改，事务1再次快照读。</p>
+<p>例如：</p>
+<pre><code>T1 时刻：事务 A 先执行「快照读语句」：select * from t_test where id &gt; 100 得到了 3 条记录。
+T2 时刻：事务 B 往插入一个 id= 200 的记录并提交；
+T3 时刻：事务 A 更新 id = 5 这条记录，然后事务A再次快照读，就会读到4条数据。
 </code></pre>
-<p>自8.0.23版本后的语法：</p>
-<pre class=" language-#"><code class="language-#">CHANGE REPLICATION SOURCE TO SOURCE_HOST='主机地址',SOURCE_PORT=3306,SOURCE_USER='账户名',SOURCE_PASSWORD='密码',SOURCE_LOG_FILE='mysql-bin.000011',SOURCE_LOG_POS=1693;
-</code></pre>
-<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><p>低于8.0.22版本的语法(都在mysql内执行)：</p>
-<pre><code>START SLAVE;
-</code></pre>
-<p>自8.0.22版本后的语法，都把slave换成REPLICA：</p>
-<pre><code>START REPLICA;
-</code></pre>
-<p>查看状态：</p>
-<pre><code>SHOW REPLICA STATUS\G;
-</code></pre>
-<p>这三次这样就表示已经成功<br><img src="/images/pasted-15.png"></p>
-<h2 id="途中bug"><a href="#途中bug" class="headerlink" title="途中bug"></a>途中bug</h2><h3 id="认证问题"><a href="#认证问题" class="headerlink" title="认证问题"></a>认证问题</h3><p><img src="/images/pasted-18.png"><br>错误信息指出，认证插件 ‘caching_sha2_password’ 报告了一个错误，指示认证需要安全连接。<br><img src="/images/pasted-16.png"><br>解决方法，修改认证方式，在主机的mysql处：</p>
-<pre><code>ALTER USER 'yourusername'@'localhost' IDENTIFIED WITH mysql_native_password BY 'youpassword';
-</code></pre>
-<h3 id="MySQL的UUIDS相同"><a href="#MySQL的UUIDS相同" class="headerlink" title="MySQL的UUIDS相同"></a>MySQL的UUIDS相同</h3><p>配置完后显示两服务器MySQL的UUIDS相同，原因是我直接克隆虚拟机导致UUID相同。。。。。。<br><img src="/images/pasted-14.png"><br>解决方法，从机处：</p>
-<pre class=" language-#"><code class="language-#"># 先生成uuid
-mysql> select uuid();
-+--------------------------------------+
-| uuid()                               |
-+--------------------------------------+
-| 97f25087-7d40-11ee-8dad-000c2958cf96 |
-+--------------------------------------+
-1 row in set (0.00 sec)
-# 找到文件位置
-mysql> show variables like 'datadir';
-+---------------+-----------------+
-| Variable_name | Value           |
-+---------------+-----------------+
-| datadir       | /var/lib/mysql/ |
-+---------------+-----------------+
-1 row in set (0.02 sec)
-# 退出mysql修改UUID，重启即可
-vim /var/lib/mysql/auto.cnf
-service mysql restart
-</code></pre>
+<p>原因：事务A的更新操作是锁定读，读的是最新的数据，因此事务A的更新操作是可以生效的在这个时刻，这条新记录的 trx_id 隐藏列的值就变成了事务 A 的事务 id，所以是能看到的。</p>
 
                 
             </div>
@@ -647,7 +560,7 @@ service mysql restart
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://saltedfishhhhhh.github.io/2023/11/07/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">https://saltedfishhhhhh.github.io/2023/11/07/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</a>
+                    <a href="https://saltedfishhhhhh.github.io/2024/03/03/MySQL-%E5%B9%BB%E8%AF%BB%E8%A2%AB%E5%BD%BB%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BA%86%E5%90%97%EF%BC%9F/">https://saltedfishhhhhh.github.io/2024/03/03/MySQL-%E5%B9%BB%E8%AF%BB%E8%A2%AB%E5%BD%BB%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BA%86%E5%90%97%EF%BC%9F/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -685,12 +598,8 @@ service mysql restart
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/mysql/">
-                                    <span class="chip bg-color">mysql</span>
-                                </a>
-                            
-                                <a href="/tags/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
-                                    <span class="chip bg-color">主从复制</span>
+                                <a href="/tags/Mysql/">
+                                    <span class="chip bg-color">Mysql</span>
                                 </a>
                             
                         </div>
@@ -997,17 +906,18 @@ service mysql restart
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2023/12/01/ES%E7%B4%A2%E5%BC%95%E3%80%81%E6%96%87%E6%A1%A3%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/">
+                <a href="/2024/03/03/MySQL-%E5%B9%BB%E8%AF%BB%E8%A2%AB%E5%BD%BB%E5%BA%95%E8%A7%A3%E5%86%B3%E4%BA%86%E5%90%97%EF%BC%9F/">
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/medias/featureimages/19.webp" class="responsive-img" alt="Elasticsearch索引、文档、搜索">
+                        <img src="https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/medias/featureimages/18.webp" class="responsive-img" alt="MySQL RR隔离级别下，幻读被彻底解决了吗？">
                         
-                        <span class="card-title">Elasticsearch索引、文档、搜索</span>
+                        <span class="card-title">MySQL RR隔离级别下，幻读被彻底解决了吗？</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -1017,30 +927,27 @@ service mysql restart
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-12-01
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-03
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/springcloud/" class="post-category">
-                                    springcloud
+                            <a href="/categories/Mysql/" class="post-category">
+                                    Mysql
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/elasticsearch/">
-                        <span class="chip bg-color">elasticsearch</span>
-                    </a>
-                    
-                    <a href="/tags/spring-cloud/">
-                        <span class="chip bg-color">spring cloud</span>
+                    <a href="/tags/Mysql/">
+                        <span class="chip bg-color">Mysql</span>
                     </a>
                     
                 </div>
@@ -1054,13 +961,13 @@ service mysql restart
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/11/06/%E8%BF%9E%E6%8E%A5%E8%99%9A%E6%8B%9F%E6%9C%BAMySQL%E6%8A%A5%E9%94%99/">
+                <a href="/2024/02/22/I-O%E6%A8%A1%E5%9E%8B%E6%B5%85%E6%9E%90/">
                     <div class="card-image">
                         
                         
-                        <img src="https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/medias/featureimages/6.webp" class="responsive-img" alt="连接虚拟机MySQL出错">
+                        <img src="https://cdn.jsdelivr.net/gh/Saltedfishhhhhh/cdn/source/medias/featureimages/2.webp" class="responsive-img" alt="I/O模型浅析">
                         
-                        <span class="card-title">连接虚拟机MySQL出错</span>
+                        <span class="card-title">I/O模型浅析</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -1071,18 +978,14 @@ service mysql restart
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-06
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-22
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/linux/" class="post-category">
-                                    linux
-                                </a>
-                            
-                            <a href="/categories/linux/bug/" class="post-category">
-                                    bug
+                            <a href="/categories/I-O/" class="post-category">
+                                    I/O
                                 </a>
                             
                             
@@ -1092,12 +995,8 @@ service mysql restart
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/mysql/">
-                        <span class="chip bg-color">mysql</span>
-                    </a>
-                    
-                    <a href="/tags/linux/">
-                        <span class="chip bg-color">linux</span>
+                    <a href="/tags/I-O/">
+                        <span class="chip bg-color">I/O</span>
                     </a>
                     
                 </div>
